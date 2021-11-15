@@ -1,1 +1,42 @@
 # CMPE283 Assignment 1
+
+## Step-by-Step Instructions
+- Configure Xubuntu 20.04.3 64-Bit on VMware Workstation (4 Processors, 8 GB Memory, 50 GB Hard Disk, Nested Virtualization Enabled)
+- Install all necessary requirements in the terminal using the following commands:
+  - `sudo apt install git`
+  - `sudo apt install build-essential`
+  - `sudo apt install flex bison`
+  - `sudo apt install libssl-dev`
+  - `sudo apt install libelf-dev`
+  - `sudo apt install dwarves`
+- Fork the Linux GitHub repository and then clone your forked repository into your VM's home directory
+- Run the following commands to begin the process of building the Linux Kernel
+  - `cd linux`
+  - Create a folder, cmpe283, and place Makefile and cmpe283-1.c files provided into this folder within the linux directory
+  - `uname -a`
+    - Displays the config file that you want to copy, in my case it was 5.11.0-40-generic
+  - `cp /boot/config-5.11.0-40-generic .config`
+    - If you run into certificate issues and modify the .config file
+      - Set the lines, `CONFIG_SYSTEM_TRUSTED_KEYS` and `CONFIG_SYSTEM_REVOCATION_KEYS` to empty strings
+  - `make oldconfig`
+    - Might get asked a bunch of questions, just press and hold enter to give default answers until all questions are answered
+  - `make prepare`
+  - `make -j 4 modules`
+  - `make -j 4`
+  - `sudo make INSTALL_MOD_STRIP=1 modules_install`
+  - `sudo make install`
+  - `sudo reboot`
+  - `uname -a`
+    - Now displays the new Linux kernel from GitHub, which as of this writing is 5.15.0+, instead of 5.11.0-40-generic from earlier
+  - Modify cmpe283-1.c file, add `MODULE_LICENSE("GPL v2");` to the bottom
+  - `cd cmpe283`
+  - `make`
+  - `sudo insmod cmpe283-1.ko`
+    - Insert the module into the kernel
+  - `dmesg`
+    - ![Capture](https://user-images.githubusercontent.com/2999334/141731903-8fba6a29-2c21-4ad4-a67e-fb0fb507b922.PNG)
+  - `sudo rmmod cmpe283-1`
+    - Remove the module out of the kernel
+  - `dmesg`
+    - ![Capture2](https://user-images.githubusercontent.com/2999334/141731919-a5066e6f-4096-4296-8ca7-f13483642a46.PNG)
+  - Commit any changes to your forked repository on GitHub
