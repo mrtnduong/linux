@@ -29,7 +29,7 @@
   - `uname -a`
     - Now displays the new Linux kernel from GitHub, which as of this writing is 5.15.0+, instead of 5.11.0-40-generic from earlier
   - Modify cmpe283-1.c file, add `MODULE_LICENSE("GPL v2");` to the bottom
-  - `cd cmpe283`
+  - `cd linux/cmpe283`
   - `make`
   - `sudo insmod cmpe283-1.ko`
     - Insert the module into the kernel
