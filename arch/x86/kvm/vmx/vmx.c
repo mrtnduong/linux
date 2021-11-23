@@ -5912,6 +5912,9 @@ void dump_vmcs(struct kvm_vcpu *vcpu)
 		       vmcs_read16(VIRTUAL_PROCESSOR_ID));
 }
 
+//u32 total_exits;
+//EXPORT_SYMBOL(total_exits);
+
 /*
  * The guest has exited.  See if we can fix it or if we need userspace
  * assistance.
@@ -5922,6 +5925,9 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 	union vmx_exit_reason exit_reason = vmx->exit_reason;
 	u32 vectoring_info = vmx->idt_vectoring_info;
 	u16 exit_handler_index;
+	extern u32 total_exits;
+
+	total_exits++;
 
 	/*
 	 * Flush logged GPAs PML buffer, this will make dirty_bitmap more
@@ -6080,7 +6086,20 @@ unexpected_vmexit:
 
 static int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 {
-	int ret = __vmx_handle_exit(vcpu, exit_fastpath);
+	/* Assignment 2 */
+	int ret;
+	uint64_t time_before_exit;
+	uint64_t time_after_exit;
+	uint64_t cpu_cycle;
+	extern uint64_t all_cpu_cycles;
+	
+	time_before_exit = rdtsc();
+
+	ret = __vmx_handle_exit(vcpu, exit_fastpath);
+
+	time_after_exit = rdtsc();
+	cpu_cycle = (time_before_exit - time_after_exit);
+	all_cpu_cycles = (all_cpu_cycles + cpu_cycle);
 
 	/*
 	 * Exit to user space when bus lock detected to inform that there is
