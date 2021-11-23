@@ -1247,9 +1247,15 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 	ecx = kvm_rcx_read(vcpu);
 	if (eax == 0x4FFFFFFF) {
 		eax = total_exits;
+		printk("CPUID - 0x4FFFFFFF\n");
+		printk("eax: %u\n", eax);
 	} else if (eax == 0x4FFFFFFE) {
 		ebx = all_cpu_cycles >> 32;
 		ecx = all_cpu_cycles & 0xFFFFFFFF;
+		printk("CPUID - 0x4FFFFFFE\n");
+		printk("eax: %u\n", eax);
+		printk("ebx: %u\n", ebx);
+		printk("ecx: %u\n", ecx);
 	} else {
 		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
 	}
