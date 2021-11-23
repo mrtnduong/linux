@@ -1,5 +1,7 @@
 # CMPE283 Assignment 1
 
+Completed as individual
+
 ## Step-by-Step Instructions
 - Configure Xubuntu 20.04.3 64-Bit on VMware Workstation (4 Processors, 8 GB Memory, 50 GB Hard Disk, Nested Virtualization Enabled)
 - Install all necessary requirements in the terminal using the following commands:
@@ -13,23 +15,26 @@
 - Run the following commands to begin the process of building the Linux Kernel
   - `cd linux`
   - Create a folder, cmpe283, and place Makefile and cmpe283-1.c files provided into this folder within the linux directory
+  - Modify cmpe283-1.c in order to obtain required output
+    - Additionally, add `MODULE_LICENSE("GPL v2");` to the bottom of cmpe283-1.c to avoid license error
   - `uname -a`
     - Displays the config file that you want to copy, in my case it was 5.11.0-40-generic
   - `cp /boot/config-5.11.0-40-generic .config`
-    - If you run into certificate issues and modify the .config file
+    - If you run into certificate issues, modify the .config file
       - Set the lines, `CONFIG_SYSTEM_TRUSTED_KEYS` and `CONFIG_SYSTEM_REVOCATION_KEYS` to empty strings
   - `make oldconfig`
     - Might get asked a bunch of questions, just press and hold enter to give default answers until all questions are answered
   - `make prepare`
   - `make -j 4 modules`
+    - The number "4" represents the number of processors assigned to your VM and the number of Make jobs running at once
   - `make -j 4`
   - `sudo make INSTALL_MOD_STRIP=1 modules_install`
   - `sudo make install`
   - `sudo reboot`
+    - This will reboot the VM
   - `uname -a`
     - Now displays the new Linux kernel from GitHub, which as of this writing is 5.15.0+, instead of 5.11.0-40-generic from earlier
-  - Modify cmpe283-1.c file, add `MODULE_LICENSE("GPL v2");` to the bottom
-  - `cd cmpe283`
+  - `cd linux/cmpe283`
   - `make`
   - `sudo insmod cmpe283-1.ko`
     - Insert the module into the kernel
