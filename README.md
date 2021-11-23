@@ -59,9 +59,9 @@ Work Distribution:
 - **Ruchit Patel**: Implemented 0x4FFFFFFE. Added variables in cpuid.c to calculate the processing time of exits. Modified kvm_emulate_cpuid to fetch the processing time when eax=0x4FFFFFFE. Displayed the high 32 bits of the total time spent processing all exits in %ebx and low 32 bits of the total time spent processing all exits in %ecx. Coded the vmx_handle_exit to calculate processing time of exits in vmx.c.
 
 ## Step-by-Step Instructions
-Assumption: Linux kernel setup from assignment 1 has been completed, running on a VM with Xubuntu 20.04
+Assumption: Running on a VM with Xubuntu 20.04 with environment setup from Assignment 1
 
-Note: In our case, following the professor's video for 0x4FFFFFFF resulted in error which were solved by moving around the variable declarations and using `EXPORT_SYMBOL`
+Note: In our case, following the professor's video exactly for 0x4FFFFFFF resulted in error which was solved by moving around the variable declarations and using `EXPORT_SYMBOL`
 
 1. Implement CPUID leaf nodes: 0x4FFFFFFF and 0x4FFFFFFE in cpuid.c and vmx.c within the Linux kernel
 2. Change your directory to where you placed the Linux kernel
@@ -90,4 +90,9 @@ Note: In our case, following the professor's video for 0x4FFFFFFF resulted in er
 9. Boot into VM running Lubuntu 21.10 (VM within a VM)
 10. Install CPUID package on inner VM
 11. On the terminal, run `cpuid -l [Insert leaf node here]` (Example: `cpuid -l 0x4FFFFFFF`)
-12. 
+12. Here is our environment showing the host VM and the inner VM
+- ![Capture2](https://user-images.githubusercontent.com/2999334/142979558-9f4fe05a-7f6b-4456-8dfd-efb1ed3178e7.PNG)
+13. Here are our results from the inner VM after running `cpuid -l 0x4FFFFFFF` and `cpuid -l 0x4FFFFFFE`
+- ![Capture3](https://user-images.githubusercontent.com/2999334/142979577-b62533ea-0b3c-47b4-a77c-b6feb25c48c8.PNG)
+14. Here are our results from the host VM running `dmesg`
+- ![Capture4](https://user-images.githubusercontent.com/2999334/142979587-bc591503-d353-4deb-933b-fe096f4a8900.PNG)
