@@ -91,8 +91,9 @@ Note: In our case, following the professor's video exactly for 0x4FFFFFFF result
 10. Install CPUID package on inner VM
 11. On the terminal, run `cpuid -l [Insert leaf node here]` (Example: `cpuid -l 0x4FFFFFFF`)
 12. Here is our environment showing the host VM and the inner VM
-- ![Capture2](https://user-images.githubusercontent.com/2999334/142979558-9f4fe05a-7f6b-4456-8dfd-efb1ed3178e7.PNG)
+  - Running `sudo virsh -c qemu:///system list` in our host VM reveals the inner VM
+  - ![Capture2](https://user-images.githubusercontent.com/2999334/142979558-9f4fe05a-7f6b-4456-8dfd-efb1ed3178e7.PNG)
 13. Here are our results from the inner VM after running `cpuid -l 0x4FFFFFFF` and `cpuid -l 0x4FFFFFFE`
-- ![Capture3](https://user-images.githubusercontent.com/2999334/142979577-b62533ea-0b3c-47b4-a77c-b6feb25c48c8.PNG)
+  - ![Capture3](https://user-images.githubusercontent.com/2999334/142979577-b62533ea-0b3c-47b4-a77c-b6feb25c48c8.PNG)
 14. Here are our results from the host VM running `dmesg`
-- ![Capture4](https://user-images.githubusercontent.com/2999334/142979587-bc591503-d353-4deb-933b-fe096f4a8900.PNG)
+  - ![Capture4](https://user-images.githubusercontent.com/2999334/142979587-bc591503-d353-4deb-933b-fe096f4a8900.PNG)
