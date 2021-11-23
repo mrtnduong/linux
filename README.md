@@ -45,3 +45,49 @@ Completed as individual
   - `dmesg`
     - ![Capture2](https://user-images.githubusercontent.com/2999334/141731919-a5066e6f-4096-4296-8ca7-f13483642a46.PNG)
   - Commit any changes to your forked repository on GitHub
+
+
+
+
+
+# CMPE283 Assignment 2
+
+Group Members: Martin Duong & Ruchit Patel
+
+Work Distribution:
+- **Martin Duong**: Implemented 0x4FFFFFFF according to professor's video with slight modifications to get kernel to build. Handled the building of the kernel, setting up the VM environments, and testing the program.
+- **Ruchit Patel**: Implemented 0x4FFFFFFE. Added variables in cpuid.c to calculate the processing time of exits. Modified kvm_emulate_cpuid to fetch the processing time when eax=0x4FFFFFFE. Displayed the high 32 bits of the total time spent processing all exits in %ebx and low 32 bits of the total time spent processing all exits in %ecx. Coded the vmx_handle_exit to calculate processing time of exits in vmx.c.
+
+## Step-by-Step Instructions
+Assumption: Linux kernel setup from assignment 1 has been completed, running on a VM with Xubuntu 20.04
+
+Note: In our case, following the professor's video for 0x4FFFFFFF resulted in error which were solved by moving around the variable declarations and using `EXPORT_SYMBOL`
+
+1. Implement CPUID leaf nodes: 0x4FFFFFFF and 0x4FFFFFFE in cpuid.c and vmx.c within the Linux kernel
+2. Change your directory to where you placed the Linux kernel
+3. `make -j 4 modules`
+4. `sudo bash`
+5. `make MOD_INSTALL_STRIP=1 modules_install`
+	- We don't have to run this command with the additional "make install" since we haven't changed the version of the kernel we're running
+6. Make sure kvm module for hypervisor is not already loaded
+	- `lsmod | grep kvm`
+	- If it is then:
+		- `rmmod kvm`
+		- `rmmod kvm_intel`
+			- Run this first if you are presented with `ERROR: Module kvm is in use by kvm_intel`
+	- If nothing is returned then kvm hypervisor is not running, next:
+		- `modprobe kvm`
+			- If you get missing symbol error then change around where variables are declared in cpuid.c and vmx.c
+		- `lsmod | grep kvm`
+			- Check if kvm is loaded
+		- `modprobe kvm_intel`
+		- `lsmod | grep kvm_intel`
+		  - This should ensure that kvm and kvm_intel are loaded properly and you should get the result below
+		  - ![Capture](https://user-images.githubusercontent.com/2999334/142976420-d320ea22-9eed-4eba-bb1a-e3fcb6ac5bdb.PNG)
+		
+7. Install kvm on VM running Xubuntu 20.04
+8. Create a VM with kvm running Lubuntu 21.10, 2GB Memory, 1 Processor
+9. Boot into VM running Lubuntu 21.10 (VM within a VM)
+10. Install CPUID package on inner VM
+11. On the terminal, run `cpuid -l [Insert leaf node here]` (Example: `cpuid -l 0x4FFFFFFF`)
+12. 
