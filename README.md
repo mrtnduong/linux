@@ -97,3 +97,38 @@ Note: In our case, following the professor's video exactly for 0x4FFFFFFF result
   - ![Capture3](https://user-images.githubusercontent.com/2999334/142979577-b62533ea-0b3c-47b4-a77c-b6feb25c48c8.PNG)
 14. Here are our results from the host VM running `dmesg`
   - ![Capture4](https://user-images.githubusercontent.com/2999334/142979587-bc591503-d353-4deb-933b-fe096f4a8900.PNG)
+
+
+
+
+
+# CMPE283 Assignment 3
+
+Group Members: Martin Duong & Ruchit Patel
+
+Work Distribution:
+- **Martin Duong**: Implemented 0x4FFFFFFC. Handled the building of the kernel, setting up the VM environments, and testing the program.
+- **Ruchit Patel**: Implemented 0x4FFFFFFD. Added variables in cpuid.c to calculate the number of individual exits. Modified the kvm_emulate_cpuid, so that can fetch the number of exits when eax=0x4FFFFFFD and ecx = id of exit. Display the number of exits due to that individual exit reason in eax and then print eax. Coded the vmx_handle_exit to calculate number of exits of particular type in vmx.c.
+
+## Step-by-Step Instructions
+Assignment 3 is a continuation of Assignment 2, so the same steps can be followed, just changing what CPUID leaf node is chosen within the inner VM.
+
+1. Implement CPUID leaf nodes: 0x4FFFFFFC and 0x4FFFFFFD in cpuid.c and vmx.c within the Linux kernel
+2. In the case of these two leaf nodes, to return the number of exits or CPU cycles for a specific exit reason, do the following command `cpuid -l 0x4FFFFFF[C/D] -s [Exit Reason]`, `-l` specifies the leaf and `-s` specifies the subleaf (Example: `cpuid -l 0x4FFFFFFC -s 0` to get the number of CPU cycles on exit reason 0)
+4. Here are our results from the inner VM after running `cpuid -l 0x4FFFFFFC` and `cpuid -l 0x4FFFFFFD`
+  - ![Capture4](https://user-images.githubusercontent.com/2999334/143945562-d57879c6-a825-44ae-a83d-d58fe19b3209.PNG)
+6. Here are our results from the host VM running `dmesg`
+  - ![Capture2](https://user-images.githubusercontent.com/2999334/143945579-06246f78-4bb7-446f-a930-7d14c48af688.PNG)
+  - ![Capture3](https://user-images.githubusercontent.com/2999334/143945587-32b2f949-fade-42d8-a3ac-ef337ef74f22.PNG)
+
+## Questions
+1. Comment on the frequency of exits – does the number of exits increase at a stable rate? Or are there
+more exits performed during certain VM operations? Approximately how many exits does a full VM
+boot entail?
+  - Most exits seem to never occur as they stay 0 even after multiple runs of CPUID. While doing nothing in the inner VM, it looks like HLT and external interrupts increase at a stable rate and CPUID exits increase as we call CPUID. When doing IO, IO instruction exits increase signifcantly as expected. There are several exits, MOV DR, PAUSE, WBINVD or WBNOINVD, and XSETBV, that occur during VM boot but remain stagnant afterwards.
+  - Starting up the inner VM and running `cpuid -l 0x4FFFFFFF` returns 6491169 exits, and then performing a reboot of the inner VM and running `cpuid -l 0x4FFFFFFF` again returns 7490187 exits, for a difference of 999,018 exits. Therefore, a full VM boot gives us 6491169 exits while rebooting the VM gives us approximately 1 million exits per reboot.
+  - ![Capture](https://user-images.githubusercontent.com/2999334/143944560-693f2e1c-1c2a-42d4-9ad0-f847ddf82fb1.PNG)
+
+2. Of the exit types defined in the SDM, which are the most frequent? Least?
+  - The most frequent exits (100000+ exits) are: External interrupt, CPUID, HLT, Control-register accesses, I/O instruction, WRMSR, EPT violation, and EPT misconfiguration.
+  - The least frequent exits (1-1000 exits) are: MOV DR, PAUSE, Access to GDTR or IDTR, WBINVD or WBNOINVD, and XSETBV.
