@@ -115,9 +115,9 @@ Assignment 3 is a continuation of Assignment 2, so the same steps can be followe
 
 1. Implement CPUID leaf nodes: 0x4FFFFFFC and 0x4FFFFFFD in cpuid.c and vmx.c within the Linux kernel
 2. In the case of these two leaf nodes, to return the number of exits or CPU cycles for a specific exit reason, do the following command `cpuid -l 0x4FFFFFF[C/D] -s [Exit Reason]`, `-l` specifies the leaf and `-s` specifies the subleaf (Example: `cpuid -l 0x4FFFFFFC -s 0` to get the number of CPU cycles on exit reason 0)
-4. Here are our results from the inner VM after running `cpuid -l 0x4FFFFFFC` and `cpuid -l 0x4FFFFFFD`
+3. Here are our results from the inner VM after running `cpuid -l 0x4FFFFFFC` and `cpuid -l 0x4FFFFFFD`
   - ![Capture4](https://user-images.githubusercontent.com/2999334/143945562-d57879c6-a825-44ae-a83d-d58fe19b3209.PNG)
-6. Here are our results from the host VM running `dmesg`
+4. Here are our results from the host VM running `dmesg`
   - ![Capture2](https://user-images.githubusercontent.com/2999334/143945579-06246f78-4bb7-446f-a930-7d14c48af688.PNG)
   - ![Capture3](https://user-images.githubusercontent.com/2999334/143945587-32b2f949-fade-42d8-a3ac-ef337ef74f22.PNG)
 
