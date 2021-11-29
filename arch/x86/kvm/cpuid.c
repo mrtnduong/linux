@@ -1236,15 +1236,24 @@ uint64_t all_cpu_cycles;
 EXPORT_SYMBOL(total_exits);
 EXPORT_SYMBOL(all_cpu_cycles);
 
+atomic_t exits_array[70];
+atomic_long_t exits_cycles_array[70];
+EXPORT_SYMBOL(exits_array);
+EXPORT_SYMBOL(exits_cycles_array);
+//uint64_t exit_cpu_cycles;
+
 int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 {
 	u32 eax, ebx, ecx, edx;
+	uint64_t exit_cpu_cycles;
+	int i;
 
 	if (cpuid_fault_enabled(vcpu) && !kvm_require_cpl(vcpu, 0))
 		return 1;
 
 	eax = kvm_rax_read(vcpu);
 	ecx = kvm_rcx_read(vcpu);
+
 	if (eax == 0x4FFFFFFF) {
 		eax = total_exits;
 		printk("CPUID - 0x4FFFFFFF\n");
@@ -1256,6 +1265,38 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		printk("eax: %u\n", eax);
 		printk("ebx: %u\n", ebx);
 		printk("ecx: %u\n", ecx);
+	} else if (eax == 0x4FFFFFFD) {
+		if (ecx < 0 || ecx > 69 || ecx == 35 || ecx == 38 || ecx == 42 || ecx == 65) {
+			eax = ebx = ecx = 0;
+			edx = 0xFFFFFFFF;
+		} else if (ecx == 3 || ecx == 4 || ecx == 5 || ecx == 6 || ecx == 11 || ecx == 16 || ecx == 17 || ecx == 33 || ecx == 34 || ecx == 51 || ecx == 63 || ecx == 64 ||ecx == 66 || ecx == 68 || ecx == 69) {
+			eax = ebx = ecx = edx = 0;
+		} else {
+			eax = atomic_read(&exits_array[ecx]);
+			printk("CPUID - 0x4FFFFFFD\n");
+			for (i = 0; i < 70; i++) {
+				//eax = atomic_read(&exits_array[ecx]);
+				printk("Exit Reason: %u, Times Occurred: %u\n", i, atomic_read(&exits_array[i]));
+			}
+		}
+	} else if (eax == 0x4FFFFFFC) {
+		if (ecx < 0 || ecx > 69 || ecx == 35 || ecx == 38 || ecx == 42 || ecx == 65) {
+			eax = ebx = ecx = 0;
+			edx = 0xFFFFFFFF;
+		} else if (ecx == 3 || ecx == 4 || ecx == 5 || ecx == 6 || ecx == 11 || ecx == 16 || ecx == 17 || ecx == 33 || ecx == 34 || ecx == 51 || ecx == 63 || ecx == 64 ||ecx == 66 || ecx == 68 || ecx == 69) {
+			eax = ebx = ecx = edx = 0;
+		} else {
+			exit_cpu_cycles = atomic64_read(&exits_cycles_array[ecx]);
+			ebx = exit_cpu_cycles >> 32;
+			ecx = exit_cpu_cycles & 0xFFFFFFFF;
+			printk("CPUID - 0x4FFFFFFC\n");
+			for (i = 0; i < 70; i++) {
+				//exit_cpu_cycles = atomic64_read(&exits_cycles_array[ecx]);
+				//ebx = exit_cpu_cycles >> 32;
+				//ecx = exit_cpu_cycles & 0xFFFFFFFF;
+				printk("Exit Reason: %u total CPU cycles is %llu\n", i, atomic64_read(&exits_cycles_array[i]));
+			}
+		}
 	} else {
 		kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, false);
 	}

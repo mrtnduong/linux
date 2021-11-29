@@ -6086,20 +6086,32 @@ unexpected_vmexit:
 
 static int vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
 {
-	/* Assignment 2 */
+	/* Assignment 2/3 */
 	int ret;
 	uint64_t time_before_exit;
 	uint64_t time_after_exit;
 	uint64_t cpu_cycle;
 	extern uint64_t all_cpu_cycles;
-	
+
+	uint16_t exit_handler_index;
+	extern atomic_t exits_array[70];
+	extern atomic_long_t exits_cycles_array[70];
+
+	struct vcpu_vmx *vmx = to_vmx(vcpu);
+	union vmx_exit_reason exit_reason = vmx->exit_reason;
+
+	exit_handler_index = array_index_nospec((u16)exit_reason.basic, kvm_vmx_max_exit_handlers);
+
 	time_before_exit = rdtsc();
 
 	ret = __vmx_handle_exit(vcpu, exit_fastpath);
 
 	time_after_exit = rdtsc();
-	cpu_cycle = (time_before_exit - time_after_exit);
+	cpu_cycle = (time_after_exit - time_before_exit);
 	all_cpu_cycles = (all_cpu_cycles + cpu_cycle);
+
+	atomic_inc(&exits_array[exit_handler_index]);
+	atomic64_add(cpu_cycle, &exits_cycles_array[exit_handler_index]);
 
 	/*
 	 * Exit to user space when bus lock detected to inform that there is
