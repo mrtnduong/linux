@@ -3,6 +3,7 @@
 Group Members: Martin Duong & Ruchit Patel
 
 Martin Duong: Ran assignment with/without EPT
+
 Ruchit Patel: Answered questions
 
 Assumptions: Working Assignment 3
